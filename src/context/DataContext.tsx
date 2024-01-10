@@ -27,48 +27,13 @@ function DataContextProvider({ children }: { children: React.ReactNode }) {
   const [loading, setLoading] = useState<boolean>(false);
   const [lastFetchedNews, setLastFetchedNews] =
     useState<newsObjType>(INITIAL_NEWS_OBJECT);
-  // const endOfListRef = useRef();
-  // const { currentUser } = useAuth();
-
-  // -----------------------------------
-  // useEffect(() => {
-  //   const documentRef = collection(
-  //     db,
-  //     "users",
-  //   );
-  //   const unsubscribe = onSnapshot(documentRef, (QuerySnapshot) => {
-  //     const newsArr = QuerySnapshot.docs.map((doc) => ({
-  //       ...doc.data(),
-  //     }));
-  //     console.log(newsArr);
-  //   });
-
-  //   return unsubscribe;
-  // }, [currentUser]);
-
-  // ---------------------------------------
-
-  // useEffect(() => {
-  //   const collectionRef = collection(db, "news");
-  //   const unsubscribe = onSnapshot(collectionRef, (QuerySnapshot) => {
-  //     const newsArr = QuerySnapshot.docs.map((doc) => ({
-  //       ...doc.data(),
-  //       newsId: doc.id,
-  //     }));
-  //     console.log(newsArr);
-  //     setNewsList(newsArr);
-  //     setLastNews(newsArr[0])
-  //   });
-
-  //   return unsubscribe;
-  // }, [currentUser]);
 
   // ----------------------------------------------------
 
   useEffect(() => {
     console.log(newsList);
-    
-    if(newsList.length > 0){
+
+    if (newsList.length > 0) {
       setLastNews(newsList[0]);
     }
   }, [newsList]);
@@ -79,25 +44,7 @@ function DataContextProvider({ children }: { children: React.ReactNode }) {
       fetchData();
     }
 
-    const handleScroll = () => {
-      // if (containerRef.current) {
-      //   const triggerHeight =
-      //     containerRef.current?.scrollTop + containerRef.current?.offsetHeight;
-      //   if (triggerHeight >= containerRef.current?.scrollHeight && !loading) {
-      //     console.log("BOTTOM");
-      //     fetchData();
-      //   }
-      // }
-    };
-
-    window.addEventListener("scroll", handleScroll);
-
-    fetchData();
-
-    return () => {
-      window.removeEventListener("scroll", handleScroll);
-    };
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const fetchData = async () => {
@@ -108,17 +55,20 @@ function DataContextProvider({ children }: { children: React.ReactNode }) {
       ? query(
           collectionRef,
           orderBy("publishedTime", "desc"),
-          startAfter(lastFetchedNews.publishedTime),
+          startAfter(lastFetchedNews.publishedTime ?? ""),
           limit(5)
         )
       : collectionRef;
 
     const querySnapshot = await getDocs(q);
 
-    const newNewsArr = querySnapshot.docs.map((doc) => ({
-      ...doc.data(),
-      newsId: doc.id,
-    }));
+    const newNewsArr = querySnapshot.docs.map((doc) => {
+      const data = doc.data() as newsObjType; // Explicitly cast to newsObjType
+      return {
+        ...data,
+        newsId: doc.id,
+      };
+    });
 
     setNewsList((prevNewsList) => [...prevNewsList, ...newNewsArr]);
 

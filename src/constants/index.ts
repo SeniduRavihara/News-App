@@ -1,8 +1,9 @@
+
 export const INITIAL_NEWS_OBJECT = {
   commentCount: 0,
   likesCount: 0,
   news: "",
-  publishedTime: "",
+  publishedTime: null,
   title: "",
   imageUrl: "",
   newsId: "",
@@ -26,7 +27,7 @@ export const INITIAL_CONTEXT = {
 export const INITIAL_CURRENT_USER = {
   uid: "",
   email: "",
-  name: "string",
+  name: "",
   photoURL: "",
 };
 
@@ -37,3 +38,5 @@ export const INITIAL_AUTH_CONTEXT = {
   googleSignIn: () => {},
   logout: () => {},
 };
+
+
