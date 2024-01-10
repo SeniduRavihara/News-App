@@ -56,7 +56,7 @@ function DataContextProvider({ children }: { children: React.ReactNode }) {
           collectionRef,
           orderBy("publishedTime", "desc"),
           startAfter(lastFetchedNews.publishedTime ?? ""),
-          limit(5)
+          limit(8)
         )
       : collectionRef;
 
