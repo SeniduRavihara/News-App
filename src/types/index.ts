@@ -18,6 +18,8 @@ export type dataContextType = {
   selectedNews: newsObjType;
   setSelectedNews: React.Dispatch<React.SetStateAction<newsObjType>>;
   fetchData: () => void;
+  firstLoading: boolean;
+  loading: boolean;
 };
 
 // ---------------------------------

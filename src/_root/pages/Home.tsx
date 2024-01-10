@@ -2,9 +2,11 @@ import { useData } from "../../hooks/useData";
 import Headerbar from "../../components/Headerbar";
 import { useNavigate } from "react-router-dom";
 import { newsListType, newsObjType } from "../../types";
+import FirstLoading from "../../animations/firstLoading/FirstLoading";
 
 function Home() {
-  const { newsList, lastNews, setSelectedNews, fetchData } = useData();
+  const { newsList, lastNews, setSelectedNews, fetchData, firstLoading } =
+    useData();
   const navigate = useNavigate();
 
   const getNews = (newsId: string, newsList: newsListType): newsObjType => {
@@ -16,6 +18,10 @@ function Home() {
     setSelectedNews(selectedNews);
     navigate("/news-page");
   };
+
+  if (firstLoading) {
+    return <FirstLoading />;
+  }
 
   return (
     <div className="flex flex-col items-center px-2 h-screen gap-2">
