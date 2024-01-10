@@ -86,6 +86,10 @@ function DataContextProvider({ children }: { children: React.ReactNode }) {
     setLoading(false);
   };
 
+  const addComment = (comment: string)=>{
+
+  }
+
   const value = {
     newsList,
     lastNews,
