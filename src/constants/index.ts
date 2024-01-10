@@ -12,36 +12,28 @@ export const INITIAL_NEWS_LIST = [INITIAL_NEWS_OBJECT];
 
 export const INITIAL_CONTEXT = {
   newsList: [
-    {
-      commentCount: 0,
-      likesCount: 0,
-      news: "",
-      publishedTime: "",
-      title: "",
-      imageUrl: "",
-      newsId: "",
-    },
+    INITIAL_NEWS_OBJECT
   ],
-  lastNews: {
-    commentCount: 0,
-    likesCount: 0,
-    news: "",
-    publishedTime: "",
-    title: "",
-    imageUrl: "",
-    newsId: "",
-  },
+  lastNews: INITIAL_NEWS_OBJECT,
+  selectedNews: INITIAL_NEWS_OBJECT,
+  setSelectedNews: ()=>{},
+  loading: false,
+  fetchData:()=>{},
 };
 
 // ---------------------------------
 
+export const INITIAL_CURRENT_USER = {
+  uid: "",
+  email: "",
+  name: "string",
+  photoURL: "",
+};
+
+
 export const INITIAL_AUTH_CONTEXT = {
-  currentUser: {
-    uid: "",
-    email: "",
-  },
-  setCurrentUser: ()=>{},
-  signup: () => {},
-  login: () => {},
+  currentUser: INITIAL_CURRENT_USER,
+  setCurrentUser: () => {},
+  googleSignIn: () => {},
   logout: () => {},
 };

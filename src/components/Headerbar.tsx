@@ -2,17 +2,20 @@ import { MdAccountCircle } from "react-icons/md";
 import { IoMdNotificationsOutline } from "react-icons/io";
 import { IoMdSearch } from "react-icons/io";
 import { useAuth } from "../hooks/useAuth";
-import { useNavigate } from "react-router-dom";
 
 function Headerbar() {
-  const { logout } = useAuth();
+  const { logout, googleSignIn, currentUser } = useAuth();
 
-  const navigate = useNavigate();
 
-  const handleLogout = async () => {
+  const handleAccountClick = async () => {
     try {
-      await logout();
-      navigate("/login");
+      if (currentUser) {
+        await logout();
+      } else {
+        await googleSignIn();
+      }
+
+      // navigate("/login");
     } catch (error) {
       console.log(error);
     }
@@ -26,10 +29,13 @@ function Headerbar() {
         <div className="flex items-center gap-5">
           <IoMdSearch className="w-6 h-6 cursor-pointer" />
           <IoMdNotificationsOutline className="w-6 h-6 cursor-pointer" />
-          <MdAccountCircle
-            className="w-10 h-10 text-gray-400 cursor-pointer"
-            onClick={handleLogout}
-          />
+          <div onClick={handleAccountClick}>
+            {currentUser ? (
+              <img src={currentUser.photoURL ?? ""} className="w-10 h-10 rounded-full" />
+            ) : (
+              <MdAccountCircle className="w-10 h-10 text-gray-400 cursor-pointer" />
+            )}
+          </div>
         </div>
       </div>
       <hr className="border border-t-[1px] border-gray-300 w-full" />

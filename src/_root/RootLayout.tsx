@@ -1,16 +1,10 @@
-import { Navigate, Outlet } from "react-router-dom"
-import { useAuth } from "../hooks/useAuth";
+import { Outlet } from "react-router-dom";
 
 function RootLayout() {
-
-  const token = localStorage.getItem("token");
-
-  if (!token) {
-    return <Navigate to="/login" />;
-  }
-
   return (
-    <div><Outlet /></div>
-  )
+    <div>
+      <Outlet />
+    </div>
+  );
 }
-export default RootLayout
+export default RootLayout;

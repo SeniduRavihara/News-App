@@ -1,38 +1,27 @@
 import {
-  createUserWithEmailAndPassword,
   onAuthStateChanged,
-  signInWithEmailAndPassword,
   signInWithPopup,
   signOut,
 } from "firebase/auth";
 import { createContext, useEffect, useState } from "react";
 import { auth, db, provider } from "../firebase/firebaseConfig";
 import { doc, getDoc, setDoc } from "firebase/firestore";
-import { authContextType } from "../types";
-import { INITIAL_AUTH_CONTEXT } from "../constants";
-import { useNavigate } from "react-router-dom";
+import { authContextType, currentUserType } from "../types";
+import { INITIAL_AUTH_CONTEXT, INITIAL_CURRENT_USER } from "../constants";
 
-type currentUserType = null | {
-  uid: string;
-  email: string | null;
-};
 
 export const AuthContext = createContext<authContextType>(INITIAL_AUTH_CONTEXT);
 
 function AuthContextProvider({ children }: { children: React.ReactNode }) {
-  const [currentUser, setCurrentUser] = useState<currentUserType | null>({
-    uid: "",
-    email: "",
-  });
+  const [currentUser, setCurrentUser] = useState<currentUserType | null>(INITIAL_CURRENT_USER);
 
-  // const navigate = useNavigate();
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
       if (!user) {
         setCurrentUser(null);
-        localStorage.removeItem("token");
-        localStorage.removeItem("user");
+        // localStorage.removeItem("token");
+        // localStorage.removeItem("user");
         console.log("Auth state is changed: LoggedOut");
         // navigate("/login");
         return;
@@ -41,13 +30,18 @@ function AuthContextProvider({ children }: { children: React.ReactNode }) {
       setCurrentUser({
         uid: user.uid,
         email: user.email,
+        name: user.displayName,
+        photoURL: user.photoURL,
       });
+
       console.log(user.email);
       console.log(user.uid);
+      console.log(user.displayName);
+      console.log(user.photoURL);
 
-      const token = await user.getIdToken();
-      localStorage.setItem("token", token);
-      localStorage.setItem("user", JSON.stringify(user));
+      // const token = await user.getIdToken();
+      // localStorage.setItem("token", token);
+      // localStorage.setItem("user", JSON.stringify(user));
       // navigate("/");
       console.log("Auth state is changed: loggedIn");
     });
@@ -69,6 +63,8 @@ function AuthContextProvider({ children }: { children: React.ReactNode }) {
         const userData = {
           name: user.displayName || "",
           email: user.email || "",
+          uid: user.uid,
+          photoURL: user.photoURL || "",
         };
 
         await setDoc(userDocRef, userData);
@@ -79,45 +75,7 @@ function AuthContextProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
-  const signup = async (email: string, password: string, name: string) => {
-    try {
-      const userCredential = await createUserWithEmailAndPassword(
-        auth,
-        email,
-        password
-      );
 
-      const user = userCredential.user;
-
-      const payload = {
-        likedPostIds: "",
-      };
-
-      await setDoc(doc(db, "users", user.uid), {
-        ...payload,
-        id: user.uid,
-        name,
-      });
-    } catch (error) {
-      console.error(error);
-      throw error;
-    }
-  };
-
-  const login = async (email: string, password: string) => {
-    try {
-      const userCredential = await signInWithEmailAndPassword(
-        auth,
-        email,
-        password
-      );
-
-      console.log("LOGIN", userCredential);
-    } catch (error) {
-      console.log(error);
-      throw error;
-    }
-  };
 
   const logout = async () => {
     try {
@@ -131,8 +89,6 @@ function AuthContextProvider({ children }: { children: React.ReactNode }) {
   return (
     <AuthContext.Provider
       value={{
-        signup,
-        login,
         logout,
         currentUser,
         setCurrentUser,
