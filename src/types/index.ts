@@ -22,12 +22,13 @@ export type dataContextType = {
 export type authContextType = {
   currentUser: currentUserType | null;
   setCurrentUser: React.Dispatch<React.SetStateAction<currentUserType | null>>;
-  signup: (email: string, password: string, name: string) => void;
-  login: (email: string, password: string) => void;
+  googleSignIn: ()=> void;
   logout: () => void;
 };
 
-export type currentUserType = {
+export type currentUserType = null | {
   uid: string;
   email: string | null;
+  name: string | null;
+  photoURL: string | null;
 };
