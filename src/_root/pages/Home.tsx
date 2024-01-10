@@ -2,75 +2,10 @@ import { useData } from "../../hooks/useData";
 import Headerbar from "../../components/Headerbar";
 import { useNavigate } from "react-router-dom";
 import { newsListType, newsObjType } from "../../types";
-// import { useEffect, useRef, useState } from "react";
-// import {
-//   collection,
-//   getDocs,
-//   limit,
-//   orderBy,
-//   query,
-//   startAfter,
-// } from "firebase/firestore";
-// import { db } from "../../firebase/firebaseConfig";
-// import { INITIAL_NEWS_LIST, INITIAL_NEWS_OBJECT } from "../../constants";
 
 function Home() {
   const { newsList, lastNews, setSelectedNews } = useData();
   const navigate = useNavigate();
-
-  // const [newsList, setNewsList] = useState<newsListType>(INITIAL_NEWS_LIST);
-  // const [lastNews, setLastNews] = useState<newsObjType>(INITIAL_NEWS_OBJECT);
-  // const [loading, setLoading] = useState(false);
-  // const endOfListRef = useRef();
-
-  // useEffect(() => {
-  //   const collectionRef = collection(db, "news");
-
-  //   const fetchData = async () => {
-  //     setLoading(true);
-
-  //     const querys = query(
-  //       collectionRef,
-  //       startAfter(lastNews.publishedTime),
-  //       orderBy("publishedTime"),
-  //     );
-
-  //     const querySnapshot = await getDocs(querys);
-
-  //     const newNewsArr = querySnapshot.docs.map((doc) => ({
-  //       ...doc.data(),
-  //       newsId: doc.id,
-  //     }));
-
-  //     console.log(newNewsArr);
-      
-
-  //     setNewsList((prevNewsList) => [...prevNewsList, ...newNewsArr]);
-
-  //     if (newNewsArr.length > 0) {
-  //       setLastNews(newNewsArr[newNewsArr.length - 1]);
-  //     }
-
-  //     setLoading(false);
-  //   };
-
-  //   const handleScroll = () => {
-  //     if (
-  //       endOfListRef.current &&
-  //       endOfListRef.current.getBoundingClientRect().top <= window.innerHeight
-  //     ) {
-  //       fetchData();
-  //     }
-  //   };
-
-  //   window.addEventListener("scroll", handleScroll);
-
-  //   fetchData(); // Initial data fetch
-
-  //   return () => {
-  //     window.removeEventListener("scroll", handleScroll);
-  //   };
-  // }, [lastNews]);
 
   const getNews = (newsId: string, newsList: newsListType): newsObjType => {
     return newsList.filter((news) => news.newsId === newsId)[0];
@@ -114,8 +49,6 @@ function Home() {
           </div>
         ))}
       </div>
-    {/* <div ref={endOfListRef} />
-      {loading && <p>Loading...</p>} */}
     </div>
   );
 }

@@ -1,8 +1,10 @@
+import { FieldValue } from "firebase/firestore";
+
 export type newsObjType = {
   commentCount: number;
   likesCount: number;
   news: string;
-  publishedTime: string;
+  publishedTime: FieldValue | null;
   title: string;
   imageUrl: string;
   newsId: string;

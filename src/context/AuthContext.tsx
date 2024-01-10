@@ -1,20 +1,16 @@
-import {
-  onAuthStateChanged,
-  signInWithPopup,
-  signOut,
-} from "firebase/auth";
+import { onAuthStateChanged, signInWithPopup, signOut } from "firebase/auth";
 import { createContext, useEffect, useState } from "react";
 import { auth, db, provider } from "../firebase/firebaseConfig";
 import { doc, getDoc, setDoc } from "firebase/firestore";
 import { authContextType, currentUserType } from "../types";
 import { INITIAL_AUTH_CONTEXT, INITIAL_CURRENT_USER } from "../constants";
 
-
 export const AuthContext = createContext<authContextType>(INITIAL_AUTH_CONTEXT);
 
 function AuthContextProvider({ children }: { children: React.ReactNode }) {
-  const [currentUser, setCurrentUser] = useState<currentUserType | null>(INITIAL_CURRENT_USER);
-
+  const [currentUser, setCurrentUser] = useState<currentUserType | null>(
+    INITIAL_CURRENT_USER
+  );
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
@@ -34,10 +30,10 @@ function AuthContextProvider({ children }: { children: React.ReactNode }) {
         photoURL: user.photoURL,
       });
 
-      console.log(user.email);
-      console.log(user.uid);
-      console.log(user.displayName);
-      console.log(user.photoURL);
+      // console.log(user.email);
+      // console.log(user.uid);
+      // console.log(user.displayName);
+      // console.log(user.photoURL);
 
       // const token = await user.getIdToken();
       // localStorage.setItem("token", token);
@@ -74,8 +70,6 @@ function AuthContextProvider({ children }: { children: React.ReactNode }) {
       throw error;
     }
   };
-
-
 
   const logout = async () => {
     try {
