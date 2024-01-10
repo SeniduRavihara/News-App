@@ -27,7 +27,7 @@ function DataContextProvider({ children }: { children: React.ReactNode }) {
   const [loading, setLoading] = useState<boolean>(false);
   const [lastFetchedNews, setLastFetchedNews] =
     useState<newsObjType>(INITIAL_NEWS_OBJECT);
- 
+
   // ----------------------------------------------------
 
   useEffect(() => {
@@ -44,8 +44,7 @@ function DataContextProvider({ children }: { children: React.ReactNode }) {
       fetchData();
     }
 
-
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const fetchData = async () => {
@@ -56,22 +55,20 @@ function DataContextProvider({ children }: { children: React.ReactNode }) {
       ? query(
           collectionRef,
           orderBy("publishedTime", "desc"),
-          startAfter(lastFetchedNews.publishedTime),
+          startAfter(lastFetchedNews.publishedTime ?? ""),
           limit(5)
         )
       : collectionRef;
 
     const querySnapshot = await getDocs(q);
 
-    const newNewsArr= querySnapshot.docs.map((doc) => {
-      const data = doc.data() // Explicitly cast to newsObjType
+    const newNewsArr = querySnapshot.docs.map((doc) => {
+      const data = doc.data() as newsObjType; // Explicitly cast to newsObjType
       return {
         ...data,
         newsId: doc.id,
       };
     });
-
-    console.log("sajhas", newNewsArr);
 
     setNewsList((prevNewsList) => [...prevNewsList, ...newNewsArr]);
 

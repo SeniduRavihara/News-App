@@ -1,3 +1,4 @@
+
 export const INITIAL_NEWS_OBJECT = {
   commentCount: 0,
   likesCount: 0,
@@ -37,3 +38,5 @@ export const INITIAL_AUTH_CONTEXT = {
   googleSignIn: () => {},
   logout: () => {},
 };
+
+

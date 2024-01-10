@@ -17,6 +17,7 @@ export type dataContextType = {
   lastNews: newsObjType;
   selectedNews: newsObjType;
   setSelectedNews: React.Dispatch<React.SetStateAction<newsObjType>>;
+  fetchData: () => void;
 };
 
 // ---------------------------------
@@ -24,7 +25,7 @@ export type dataContextType = {
 export type authContextType = {
   currentUser: currentUserType | null;
   setCurrentUser: React.Dispatch<React.SetStateAction<currentUserType | null>>;
-  googleSignIn: ()=> void;
+  googleSignIn: () => void;
   logout: () => void;
 };
 

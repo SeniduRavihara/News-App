@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { newsListType, newsObjType } from "../../types";
 
 function Home() {
-  const { newsList, lastNews, setSelectedNews } = useData();
+  const { newsList, lastNews, setSelectedNews, fetchData } = useData();
   const navigate = useNavigate();
 
   const getNews = (newsId: string, newsList: newsListType): newsObjType => {
@@ -21,7 +21,7 @@ function Home() {
     <div className="flex flex-col items-center px-2 h-screen gap-2">
       <Headerbar />
 
-       <div className="flex flex-col w-full items-center relative">
+      <div className="flex flex-col w-full items-center relative">
         <img
           src={lastNews.imageUrl}
           alt=""
@@ -31,7 +31,7 @@ function Home() {
         <h2 className="text-md text-white font-extrabold absolute flex w-[330px] bg-black/20 p-2 pb-4 -bottom-2">
           {lastNews.title}
         </h2>
-      </div> 
+      </div>
 
       <div className="font-bold flex flex-col px-3 divide-y mt-4 ">
         {newsList.map((newsObj, index) => (
@@ -49,6 +49,13 @@ function Home() {
           </div>
         ))}
       </div>
+
+      <button
+        onClick={fetchData}
+        className="bg-blue-900 px-5 py-2 rounded-2xl text-white font-semibold text-lg"
+      >
+        Load More
+      </button>
     </div>
   );
 }
