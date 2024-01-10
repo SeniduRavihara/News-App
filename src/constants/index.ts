@@ -1,4 +1,3 @@
-
 export const INITIAL_NEWS_OBJECT = {
   commentCount: 0,
   likesCount: 0,
@@ -12,14 +11,13 @@ export const INITIAL_NEWS_OBJECT = {
 export const INITIAL_NEWS_LIST = [INITIAL_NEWS_OBJECT];
 
 export const INITIAL_CONTEXT = {
-  newsList: [
-    INITIAL_NEWS_OBJECT
-  ],
+  newsList: [INITIAL_NEWS_OBJECT],
   lastNews: INITIAL_NEWS_OBJECT,
   selectedNews: INITIAL_NEWS_OBJECT,
-  setSelectedNews: ()=>{},
+  setSelectedNews: () => {},
   loading: false,
-  fetchData:()=>{},
+  fetchData: () => {},
+  firstLoading: false,
 };
 
 // ---------------------------------
@@ -31,12 +29,9 @@ export const INITIAL_CURRENT_USER = {
   photoURL: "",
 };
 
-
 export const INITIAL_AUTH_CONTEXT = {
   currentUser: INITIAL_CURRENT_USER,
   setCurrentUser: () => {},
   googleSignIn: () => {},
   logout: () => {},
 };
-
-

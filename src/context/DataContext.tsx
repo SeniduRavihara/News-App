@@ -25,6 +25,7 @@ function DataContextProvider({ children }: { children: React.ReactNode }) {
   const [selectedNews, setSelectedNews] =
     useState<newsObjType>(INITIAL_NEWS_OBJECT);
   const [loading, setLoading] = useState<boolean>(false);
+  const [firstLoading, setFirstLoading] = useState<boolean>(false);
   const [lastFetchedNews, setLastFetchedNews] =
     useState<newsObjType>(INITIAL_NEWS_OBJECT);
 
@@ -39,10 +40,16 @@ function DataContextProvider({ children }: { children: React.ReactNode }) {
   }, [newsList]);
 
   useEffect(() => {
-    if (newsList.length === 1) {
-      setNewsList([]);
-      fetchData();
-    }
+    const firstLoadHandle = async () => {
+      if (newsList.length === 1) {
+        setFirstLoading(true);
+        setNewsList([]);
+        await fetchData();
+        setFirstLoading(false);
+      }
+    };
+
+    firstLoadHandle();
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -56,7 +63,7 @@ function DataContextProvider({ children }: { children: React.ReactNode }) {
           collectionRef,
           orderBy("publishedTime", "desc"),
           startAfter(lastFetchedNews.publishedTime ?? ""),
-          limit(5)
+          limit(8)
         )
       : collectionRef;
 
@@ -86,6 +93,7 @@ function DataContextProvider({ children }: { children: React.ReactNode }) {
     setSelectedNews,
     loading,
     fetchData,
+    firstLoading,
   };
 
   return <DataContext.Provider value={value}>{children}</DataContext.Provider>;
