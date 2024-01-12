@@ -75,56 +75,105 @@ function NewsPage() {
     }
   };
 
+  const addLikeToNews = async () =>{
+
+  }
+
   const likePost = async () => {
-    if (currentUser && !liked) {
-      console.log("liked");
+    if (currentUser) {
       const documentRef = doc(db, "users", currentUser.uid);
-      try {
-        const updatedLikedPostsId = [
-          ...(currentUser.likedPostsId || []),
-          !currentUser.likedPostsId?.includes(selectedNews.newsId) && selectedNews.newsId,
-        ];
 
-        await updateDoc(documentRef, {
-          likedPostsId: updatedLikedPostsId,
-        });
+      if (!liked) {
+        console.log("add like");
+        try {
+          const updatedLikedPostsId = [
+            ...(currentUser.likedPostsId || []),
+            currentUser.likedPostsId?.includes(selectedNews.newsId)
+              ? null // or any other placeholder value if you want
+              : selectedNews.newsId,
+          ].filter((id) => id !== null);
 
+          await updateDoc(documentRef, {
+            likedPostsId: updatedLikedPostsId,
+          });
 
-        // const newsDocumentRef = doc(db, "news", selectedNews.newsId);
-        // await updateDoc(newsDocumentRef, {
-        //   likesCount: selectedNews.likesCount + 1,
-        // });
-      } catch (error) {
-        console.log(error);
-        throw error;
+          // const newsDocumentRef = doc(db, "news", selectedNews.newsId);
+          // await updateDoc(newsDocumentRef, {
+          //   likesCount: selectedNews.likesCount + 1,
+          // });
+        } catch (error) {
+          console.log(error);
+          throw error;
+        }
+      } else {
+        console.log("remove like");
+        try {
+          const updatedLikedNewsIdList = currentUser.likedPostsId?.filter(
+            (newsId) => newsId !== selectedNews.newsId
+          );
+
+          await updateDoc(documentRef, {
+            likedPostsId: updatedLikedNewsIdList,
+          });
+
+          // const newsDocumentRef = doc(db, "news", selectedNews.newsId);
+          // await updateDoc(newsDocumentRef, {
+          //   likesCount: selectedNews.likesCount + 1,
+          // });
+        } catch (error) {
+          console.log(error);
+          throw error;
+        }
       }
     } else {
-      // alert("Please Login for like");
+      alert("Please Login for like");
     }
   };
 
   const unlikePost = async () => {
     if (currentUser) {
-      console.log("unliked");
       const documentRef = doc(db, "users", currentUser.uid);
-      try {
-        // Assuming likedPostsId is an array field in your Firestore document
-        const updatedUnlikedPostsId = [
-          ...(currentUser.unlikedPostsId || []),
-          selectedNews.newsId,
-        ];
 
-        await updateDoc(documentRef, {
-          unlikedPostsId: updatedUnlikedPostsId,
-        });
+      if (!unliked) {
+        console.log("unliked");
+        try {
+          // Assuming likedPostsId is an array field in your Firestore document
+          const updatedUnlikedPostsId = [
+            ...(currentUser.unlikedPostsId || []),
+            selectedNews.newsId,
+          ];
 
-        // const newsDocumentRef = doc(db, "news", selectedNews.newsId);
-        // await updateDoc(newsDocumentRef, {
-        //   likesCount: selectedNews.likesCount + 1,
-        // });
-      } catch (error) {
-        console.log(error);
-        throw error;
+          await updateDoc(documentRef, {
+            unlikedPostsId: updatedUnlikedPostsId,
+          });
+
+          // const newsDocumentRef = doc(db, "news", selectedNews.newsId);
+          // await updateDoc(newsDocumentRef, {
+          //   likesCount: selectedNews.likesCount + 1,
+          // });
+        } catch (error) {
+          console.log(error);
+          throw error;
+        }
+      } else {
+        console.log("remove unlike");
+        try {
+          const updatedUnlikedNewsIdList = currentUser.likedPostsId?.filter(
+            (newsId) => newsId !== selectedNews.newsId
+          );
+
+          await updateDoc(documentRef, {
+            unlikedPostsId: updatedUnlikedNewsIdList,
+          });
+
+          // const newsDocumentRef = doc(db, "news", selectedNews.newsId);
+          // await updateDoc(newsDocumentRef, {
+          //   likesCount: selectedNews.likesCount + 1,
+          // });
+        } catch (error) {
+          console.log(error);
+          throw error;
+        }
       }
     } else {
       alert("Please Login for unlike");
@@ -176,7 +225,6 @@ function NewsPage() {
         <button onClick={handleNewsUnlikeClick}>
           <AiFillDislike className={`${unliked && "text-red-700"} text-2xl`} />
         </button>
-
       </div>
 
       <hr className="border border-t-[1px] border-gray-300 w-full" />
