@@ -1,4 +1,4 @@
-import { FieldValue } from "firebase/firestore";
+import { FieldValue, Timestamp } from "firebase/firestore";
 
 export type newsObjType = {
   commentCount: number;
@@ -36,4 +36,27 @@ export type currentUserType = null | {
   email: string | null;
   name: string | null;
   photoURL: string | null;
+  likedPostsId?: Array<string> | undefined;
 };
+
+// ----------------------------------
+
+export type commentType = {
+  comment: string;
+  likes: number;
+  person: string;
+  timestamp: Timestamp | null;
+  commentId: string;
+  photoURL: string;
+  uid: string;
+};
+
+export type commentListType = Array<{
+  comment: string;
+  likes: number;
+  person: string;
+  timestamp: Date | null | undefined;
+  commentId: string;
+  photoURL: string;
+  uid: string;
+}>;

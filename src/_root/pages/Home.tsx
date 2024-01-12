@@ -3,6 +3,7 @@ import Headerbar from "../../components/Headerbar";
 import { useNavigate } from "react-router-dom";
 import { newsListType, newsObjType } from "../../types";
 import FirstLoading from "../../animations/firstLoading/FirstLoading";
+import { Toaster } from "react-hot-toast";
 
 function Home() {
   const { newsList, lastNews, setSelectedNews, fetchData, firstLoading } =
@@ -62,6 +63,7 @@ function Home() {
       >
         Load More
       </button>
+      <Toaster />
     </div>
   );
 }

@@ -1,5 +1,4 @@
 import { createContext, useEffect, useState } from "react";
-// import { useAuth } from "../hooks/useAuth";
 import {
   collection,
   getDocs,
@@ -7,6 +6,7 @@ import {
   orderBy,
   query,
   startAfter,
+
 } from "firebase/firestore";
 import { db } from "../firebase/firebaseConfig";
 
@@ -16,6 +16,7 @@ import {
   INITIAL_NEWS_LIST,
   INITIAL_NEWS_OBJECT,
 } from "../constants";
+
 
 export const DataContext = createContext<dataContextType>(INITIAL_CONTEXT);
 
@@ -32,7 +33,7 @@ function DataContextProvider({ children }: { children: React.ReactNode }) {
   // ----------------------------------------------------
 
   useEffect(() => {
-    console.log(newsList);
+    // console.log(newsList);
 
     if (newsList.length > 0) {
       setLastNews(newsList[0]);
@@ -42,8 +43,8 @@ function DataContextProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     const firstLoadHandle = async () => {
       if (newsList.length === 1) {
-        setFirstLoading(true);
         setNewsList([]);
+        setFirstLoading(true);
         await fetchData();
         setFirstLoading(false);
       }
@@ -53,6 +54,7 @@ function DataContextProvider({ children }: { children: React.ReactNode }) {
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
 
   const fetchData = async () => {
     setLoading(true);
@@ -86,10 +88,7 @@ function DataContextProvider({ children }: { children: React.ReactNode }) {
     setLoading(false);
   };
 
-  const addComment = (comment: string)=>{
-
-  }
-
+ 
   const value = {
     newsList,
     lastNews,
