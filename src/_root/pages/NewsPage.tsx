@@ -5,9 +5,6 @@ import { useState } from "react";
 import CommentSection from "../../components/CommentSection";
 import { useAuth } from "../../hooks/useAuth";
 import {
-  Timestamp,
-  addDoc,
-  collection,
   doc,
   updateDoc,
 } from "firebase/firestore";
@@ -16,10 +13,10 @@ import { AiFillLike } from "react-icons/ai";
 import { AiFillDislike } from "react-icons/ai";
 
 function NewsPage() {
-  const [comment, setComment] = useState<string>("");
   const [liked, setLiked] = useState<boolean>(false);
   const [unliked, setUnliked] = useState<boolean>(false);
-  const { googleSignIn } = useAuth();
+
+
 
   // const [loadingComments, setLoadingComments] = useState(false);
 
@@ -46,38 +43,9 @@ function NewsPage() {
   //   // eslint-disable-next-line react-hooks/exhaustive-deps
   // }, []);
 
-  const postComment = async (comment: string) => {
-    if (currentUser) {
-      const collectionRef = collection(
-        db,
-        "news",
-        selectedNews.newsId,
-        "comments"
-      );
 
-      try {
-        await addDoc(collectionRef, {
-          likes: 0,
-          person: currentUser.name,
-          timestamp: Timestamp.now(),
-          comment,
-          uid: currentUser.uid,
-          photoURL: currentUser.photoURL,
-        });
-        console.log("New Comment added..");
-      } catch (error) {
-        console.log(error);
-        throw error;
-      }
-    } else {
-      await googleSignIn();
-      console.log(comment);
-    }
-  };
 
-  const addLikeToNews = async () =>{
-
-  }
+  // const addLikeToNews = async () => {};
 
   const likePost = async () => {
     if (currentUser) {
@@ -184,11 +152,6 @@ function NewsPage() {
     navigate("/");
   };
 
-  const handlePostComment = async () => {
-    postComment(comment);
-    setComment("");
-  };
-
   const handleNewsLikeClick = async () => {
     setLiked((pre) => !pre);
     setUnliked(false);
@@ -229,25 +192,11 @@ function NewsPage() {
 
       <hr className="border border-t-[1px] border-gray-300 w-full" />
 
-      <div>
-        <input
-          value={comment}
-          onChange={(e) => setComment(e.target.value)}
-          type="text"
-          placeholder="comment"
-          className="border-gray-600 border px-5 py-1 rounded-lg"
-        />
-        <button
-          onClick={handlePostComment}
-          className="bg-blue-900 px-5 py-1 ml-2 rounded-2xl text-white font-semibold text-lg"
-        >
-          Add
-        </button>
-      </div>
 
-      <div className="w-full">
+      <div className="w-screen">
         <CommentSection />
       </div>
+
     </div>
   );
 }

@@ -37,6 +37,7 @@ export type currentUserType = null | {
   name: string | null;
   photoURL: string | null;
   likedPostsId?: Array<string> | undefined;
+  unlikedPostsId?: Array<string> | undefined;
 };
 
 // ----------------------------------
@@ -59,4 +60,14 @@ export type commentListType = Array<{
   commentId: string;
   photoURL: string;
   uid: string;
+  replyArray: null | Array<{
+    comment: string;
+    likes: number;
+    person: string;
+    timestamp: Date | null | undefined;
+    replyId: string;
+    replyTo: string;
+    photoURL: string;
+    uid: string;
+  }>;
 }>;

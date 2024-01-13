@@ -47,9 +47,8 @@ function AuthContextProvider({ children }: { children: React.ReactNode }) {
 
       const unsubscribe = onSnapshot(documentRef, (documentSnapshot) => {
         if (documentSnapshot.exists()) {
-
-          // console.log(documentSnapshot.data());
-           setCurrentUser(documentSnapshot.data())
+          const userData = documentSnapshot.data() as currentUserType; // Type cast the data
+          setCurrentUser(userData);
         } else {
           console.log("Document does not exist.");
         }
