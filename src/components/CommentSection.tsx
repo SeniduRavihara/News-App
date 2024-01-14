@@ -269,8 +269,6 @@ function CommentSection() {
                 <Reply
                   key={index}
                   obj={repObj}
-                  replying={replying}
-                  selectedComment={selectedComment}
                 />
               ))}
             </div>

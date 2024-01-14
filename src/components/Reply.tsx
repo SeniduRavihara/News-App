@@ -1,14 +1,7 @@
 import { useAuth } from "../hooks/useAuth";
+import { replyType } from "../types";
 
-function Reply({
-  obj,
-  replying,
-  selectedComment,
-}: {
-  obj: any;
-  replying: boolean;
-  selectedComment: any;
-}) {
+function Reply({ obj }: { obj: replyType }) {
   const { currentUser } = useAuth();
   const getTimeDifference = (timestamp: Date | undefined | null): string => {
     if (!timestamp) {
@@ -30,7 +23,7 @@ function Reply({
 
   return (
     <div className="flex gap-2 py-2 w-full">
-      <img src={obj.photoURL} alt="" className="w-8 h-8 rounded-full" />
+      <img src={obj.photoURL ?? ""} alt="" className="w-8 h-8 rounded-full" />
       <div className="w-full">
         <div className="bg-gray-500/20 px-3 py-1 rounded-xl w-full">
           <div className="text-[12px] font-semibold">{obj.person}</div>
