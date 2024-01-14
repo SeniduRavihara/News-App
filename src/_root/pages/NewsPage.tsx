@@ -1,13 +1,10 @@
-import { useNavigate } from "react-router-dom";
+import { Navigate, useNavigate } from "react-router-dom";
 import { useData } from "../../hooks/useData";
 import { FaArrowLeft } from "react-icons/fa";
 import { useState } from "react";
 import CommentSection from "../../components/CommentSection";
 import { useAuth } from "../../hooks/useAuth";
-import {
-  doc,
-  updateDoc,
-} from "firebase/firestore";
+import { doc, updateDoc } from "firebase/firestore";
 import { db } from "../../firebase/firebaseConfig";
 import { AiFillLike } from "react-icons/ai";
 import { AiFillDislike } from "react-icons/ai";
@@ -16,33 +13,11 @@ function NewsPage() {
   const [liked, setLiked] = useState<boolean>(false);
   const [unliked, setUnliked] = useState<boolean>(false);
 
-
-
   // const [loadingComments, setLoadingComments] = useState(false);
 
   const { selectedNews } = useData();
   const { currentUser } = useAuth();
   const navigate = useNavigate();
-
-  // useEffect(() => {
-  //   if (selectedNews.newsId) {
-  //     const documentRef = doc(db, "news", selectedNews.newsId);
-
-  //     const unsubscribe = onSnapshot(documentRef, (documentSnapshot) => {
-  //       if (documentSnapshot.exists()) {
-  //         console.log(documentSnapshot.data());
-  //         setSelectedNews(documentSnapshot.data());
-  //       } else {
-  //         console.log("Document does not exist.");
-  //       }
-  //     });
-  //     return unsubscribe;
-  //   } else {
-  //     console.log("currentUser is not available.");
-  //   }
-  //   // eslint-disable-next-line react-hooks/exhaustive-deps
-  // }, []);
-
 
 
   // const addLikeToNews = async () => {};
@@ -163,6 +138,10 @@ function NewsPage() {
     unlikePost();
   };
 
+  if (!selectedNews.newsId) {
+    return <Navigate to="/" />;
+  }
+
   return (
     <div className="flex flex-col py-2 px-7 items-center gap-2">
       <div className="w-full p-2" onClick={handleClickArrow}>
@@ -192,11 +171,9 @@ function NewsPage() {
 
       <hr className="border border-t-[1px] border-gray-300 w-full" />
 
-
       <div className="w-screen">
         <CommentSection />
       </div>
-
     </div>
   );
 }

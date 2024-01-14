@@ -1,4 +1,4 @@
-import "./style.css";
+import "./FirstLoading.css";
 
 function FirstLoading() {
   return (

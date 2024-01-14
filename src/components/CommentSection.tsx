@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   commentDocType,
   commentListType,
@@ -21,6 +21,8 @@ import { BiSend } from "react-icons/bi";
 import Comment from "./Comment";
 import Reply from "./Reply";
 import { INITIAL_COMMENT_LIST } from "../constants";
+import Loader from "./Loader";
+import JumpAndSlide from "../animations/jump-and-slide/JumpAndSlide";
 
 function CommentSection() {
   const [commentList, setCommentList] =
@@ -31,6 +33,10 @@ function CommentSection() {
   );
   const [isScrolling, setIsScrolling] = useState<boolean>(false);
   const [comment, setComment] = useState<string>("");
+  const [loading, setLoading] = useState<boolean>(false);
+  const [firstLoad, setFirstLoad] = useState<boolean>(false);
+
+  const inputRef = useRef<HTMLInputElement>(null);
 
   const { selectedNews } = useData();
   const { currentUser, googleSignIn } = useAuth();
@@ -69,9 +75,10 @@ function CommentSection() {
     };
   }, []);
 
-  // --------------------------------------------------------
+  // ----------------------FETCH COMMENTS---------------------------
 
   const fetchComments = async () => {
+    setLoading(true);
     try {
       const commentsCollectionRef = collection(
         db,
@@ -128,15 +135,13 @@ function CommentSection() {
       setCommentList(commentsWithReply);
     } catch (error) {
       console.error("Error getting documents: ", error);
+    } finally {
+      setLoading(false);
+      setFirstLoad(true);
     }
   };
 
   // --------------------------------------------
-
-  const handleClickReply = async (commetObj: commentType) => {
-    setReplying(true);
-    setSelectedComment(commetObj);
-  };
 
   const postComment = async (comment: string) => {
     if (currentUser) {
@@ -158,25 +163,7 @@ function CommentSection() {
         });
         console.log("New Comment added..");
 
-        fetchComments()
-
-        // const newComment = {
-        //   comment,
-        //   likes: 0,
-        //   person: currentUser.name,
-        //   timestamp: Timestamp.now().toDate(),
-        //   photoURL: currentUser.photoURL,
-        //   uid: currentUser.uid,
-        //   commentId: comment,
-        // };
-
-        // setCommentList((prevCommentList) => {
-        //   if (!prevCommentList) {
-        //     return [newComment];
-        //   } else {
-        //     return [...prevCommentList, newComment];
-        //   }
-        // });
+        fetchComments();
       } catch (error) {
         console.log(error);
         throw error;
@@ -210,23 +197,7 @@ function CommentSection() {
         });
         console.log("New Reply added..");
 
-        fetchComments()
-
-        // const newReply = {
-        //   likes: 0,
-        //   person: currentUser.name,
-        //   replyTo: selectedComment.uid,
-        //   timestamp: Timestamp.now(),
-        //   comment,
-        //   uid: currentUser.uid,
-        //   photoURL: currentUser.photoURL,
-        // };
-
-        // setCommentList(
-        //   commentList?.map((commObj) => {
-        //     return commObj
-        //   })
-        // );
+        fetchComments();
       } catch (error) {
         console.log(error);
         throw error;
@@ -236,6 +207,8 @@ function CommentSection() {
       console.log(comment);
     }
   };
+
+  // ----------------------------------------
 
   const handlePostComment = async () => {
     if (comment) postComment(comment);
@@ -248,10 +221,24 @@ function CommentSection() {
     setComment("");
   };
 
+  const handleClickReply = async (commetObj: commentType) => {
+    inputRef.current?.focus();
+    setReplying(true);
+    setSelectedComment(commetObj);
+  };
+
   const handleCancelReply = async () => {
     setReplying(false);
     setSelectedComment(null);
   };
+
+  if (loading && !firstLoad) {
+    return (
+      <div className="w-full flex items-center justify-center mt-10">
+        <JumpAndSlide />
+      </div>
+    );
+  }
 
   return (
     <div className="w-full pb-10">
@@ -266,10 +253,7 @@ function CommentSection() {
             />
             <div className="flex flex-col ml-12">
               {commObj.replyArray?.map((repObj, index) => (
-                <Reply
-                  key={index}
-                  obj={repObj}
-                />
+                <Reply key={index} obj={repObj} />
               ))}
             </div>
           </div>
@@ -304,6 +288,7 @@ function CommentSection() {
           <input
             value={comment}
             onChange={(e) => setComment(e.target.value)}
+            ref={inputRef}
             type="text"
             placeholder="comment"
             className="border-gray-600 border px-5 py-1 rounded-3xl w-[calc(100%-80px)]"
