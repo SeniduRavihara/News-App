@@ -21,7 +21,6 @@ import { BiSend } from "react-icons/bi";
 import Comment from "./Comment";
 import Reply from "./Reply";
 import { INITIAL_COMMENT_LIST } from "../constants";
-import Loader from "./Loader";
 import JumpAndSlide from "../animations/jump-and-slide/JumpAndSlide";
 
 function CommentSection() {
