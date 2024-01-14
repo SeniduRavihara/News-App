@@ -66,11 +66,11 @@ function CommentSection() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedNews.newsId]);
 
-  // useEffect(() => {
-  //   console.log(commentList);
+  useEffect(() => {
+    console.log(commentList);
 
-  //   // eslint-disable-next-line react-hooks/exhaustive-deps
-  // }, [commentList]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [commentList]);
 
   useEffect(() => {
     let scrollTimer: NodeJS.Timeout;
@@ -150,7 +150,7 @@ function CommentSection() {
         })
       );
 
-      console.log(commentsWithReply);
+      // console.log(commentsWithReply);
       setCommentList(commentsWithReply);
     } catch (error) {
       console.error("Error getting documents: ", error);
@@ -158,24 +158,6 @@ function CommentSection() {
   };
 
   // --------------------------------------------
-
-  const getTimeDifference = (timestamp: Date | undefined | null): string => {
-    if (!timestamp) {
-      return "";
-    }
-
-    const currentDateTime = new Date();
-    const timeDifference = Math.abs(
-      currentDateTime.getTime() - timestamp.getTime()
-    );
-
-    const hours = Math.floor(timeDifference / (1000 * 60 * 60));
-    const minutes = Math.floor(
-      (timeDifference % (1000 * 60 * 60)) / (1000 * 60)
-    );
-
-    return hours !== 0 ? `${hours}h` : minutes !== 0 ? `${minutes}min` : "";
-  };
 
   const handleClickReply = async (commetObj: {
     comment: string;
@@ -209,6 +191,24 @@ function CommentSection() {
           photoURL: currentUser.photoURL,
         });
         console.log("New Comment added..");
+
+        const newComment = {
+          comment,
+          likes: 0,
+          person: currentUser.name,
+          timestamp: Timestamp.now().toDate(),
+          photoURL: currentUser.photoURL,
+          uid: currentUser.uid,
+        };
+        
+
+        setCommentList((prevCommentList) => {
+          if (prevCommentList === null) {
+            return [newComment];
+          } else {
+            return [...prevCommentList, newComment];
+          }
+        });
       } catch (error) {
         console.log(error);
         throw error;
@@ -241,6 +241,31 @@ function CommentSection() {
           photoURL: currentUser.photoURL,
         });
         console.log("New Reply added..");
+
+      //   const newReply = {
+      //     likes: 0,
+      //     person: currentUser.name,
+      //     replyTo: selectedComment.uid,
+      //     timestamp: Timestamp.now(),
+      //     comment,
+      //     uid: currentUser.uid,
+      //     photoURL: currentUser.photoURL,
+      //   };
+
+      //  setCommentList((prevCommentList) =>
+      //    {prevCommentList?.map((commObj) => {
+      //      if (commObj.commentId === selectedComment.commentId) {
+      //        return {
+      //          ...commObj,
+      //          replyArray: [...(commObj.replyArray || []), newReply],
+      //        };
+      //      } else {
+      //        return commObj;
+      //      }
+      //    })}
+      //  );
+
+        
       } catch (error) {
         console.log(error);
         throw error;
@@ -271,9 +296,8 @@ function CommentSection() {
     <div className="w-full pb-10">
       <div className="px-7">
         {commentList?.map((commObj, index) => (
-          <>
+          <div key={index}>
             <Comment
-              key={index}
               obj={commObj}
               handleClickReply={handleClickReply}
               replying={replying}
@@ -282,14 +306,13 @@ function CommentSection() {
             <div className="flex flex-col ml-12">
               {commObj.replyArray?.map((repObj, index) => (
                 <Reply
-                key={index}
                   obj={repObj}
                   replying={replying}
                   selectedComment={selectedComment}
                 />
               ))}
             </div>
-          </>
+          </div>
         ))}
       </div>
 
