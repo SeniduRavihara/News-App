@@ -45,29 +45,45 @@ export type currentUserType = null | {
 export type commentType = {
   comment: string;
   likes: number;
-  person: string;
-  timestamp: Timestamp | null;
+  person: string | null;
+  timestamp: Date | undefined;
   commentId: string;
-  photoURL: string;
+  photoURL: string | null;
+  uid: string;
+  replyArray?: null | Array<replyType>;
+};
+
+export type replyType = {
+  comment: string;
+  likes: number;
+  person: string | null;
+  timestamp: Date | undefined;
+  replyId: string;
+  replyTo: string;
+  photoURL: string | null;
   uid: string;
 };
 
-export type commentListType = Array<{
+export type commentListType = Array<commentType>;
+
+
+// ------------------------------------------
+
+export type commentDocType = {
   comment: string;
   likes: number;
   person: string;
-  timestamp: Date | null | undefined;
-  commentId: string;
   photoURL: string;
+  timestamp: Timestamp;
   uid: string;
-  replyArray: null | Array<{
-    comment: string;
-    likes: number;
-    person: string;
-    timestamp: Date | null | undefined;
-    replyId: string;
-    replyTo: string;
-    photoURL: string;
-    uid: string;
-  }>;
-}>;
+};
+
+export type replyDocType = {
+  comment: string;
+  likes: number;
+  person: string;
+  photoURL: string;
+  replyTo: string;
+  timestamp: Timestamp;
+  uid: string;
+};

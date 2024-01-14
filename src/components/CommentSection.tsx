@@ -1,11 +1,15 @@
 import { useEffect, useState } from "react";
-import { commentListType, commentType } from "../types";
+import {
+  commentDocType,
+  commentListType,
+  commentType,
+  replyDocType,
+} from "../types";
 import {
   Timestamp,
   addDoc,
   collection,
   getDocs,
-  onSnapshot,
   orderBy,
   query,
 } from "firebase/firestore";
@@ -16,50 +20,20 @@ import { MdAccountCircle } from "react-icons/md";
 import { BiSend } from "react-icons/bi";
 import Comment from "./Comment";
 import Reply from "./Reply";
+import { INITIAL_COMMENT_LIST } from "../constants";
 
 function CommentSection() {
-  const [commentList, setCommentList] = useState<commentListType | null>(null);
+  const [commentList, setCommentList] =
+    useState<commentListType>(INITIAL_COMMENT_LIST);
   const [replying, setReplying] = useState<boolean>(false);
-  const [selectedComment, setSelectedComment] = useState<{
-    comment: string;
-    likes: number;
-    person: string;
-    timestamp: Date | null | undefined;
-    commentId: string;
-    photoURL: string;
-    uid: string;
-  } | null>(null);
+  const [selectedComment, setSelectedComment] = useState<commentType | null>(
+    null
+  );
   const [isScrolling, setIsScrolling] = useState<boolean>(false);
   const [comment, setComment] = useState<string>("");
 
   const { selectedNews } = useData();
   const { currentUser, googleSignIn } = useAuth();
-
-  // useEffect(() => {
-  //   const collectionRef = collection(
-  //     db,
-  //     "news",
-  //     selectedNews.newsId,
-  //     "comments"
-  //   );
-  //   const q = query(collectionRef, orderBy("timestamp", "desc"));
-
-  //   const unsubscribe = onSnapshot(q, (QuerySnapshot) => {
-  //     const newCommentArr = QuerySnapshot.docs.map((doc) => {
-  //       const data = doc.data() as commentType;
-  //       const timestamp = data.timestamp?.toDate();
-  //       return {
-  //         ...data,
-  //         timestamp: timestamp,
-  //         commentId: doc.id,
-  //       };
-  //     });
-
-  //     setCommentList(newCommentArr);
-  //   });
-
-  //   return unsubscribe;
-  // }, [selectedNews.newsId]);
 
   useEffect(() => {
     fetchComments();
@@ -129,16 +103,16 @@ function CommentSection() {
           const queryReplySnapshot = await getDocs(replyQuery);
 
           const replyArray = queryReplySnapshot.docs.map((replyDoc) => {
-            const repData = replyDoc.data() as commentType;
-            const timestamp = repData.timestamp?.toDate();
+            const replyData = replyDoc.data() as replyDocType;
+            const timestamp = replyData.timestamp?.toDate();
             return {
-              ...repData,
+              ...replyData,
               timestamp,
               replyId: replyDoc.id,
             };
           });
 
-          const commentData = commentDoc.data() as commentType;
+          const commentData = commentDoc.data() as commentDocType;
           const commentTimestamp = commentData.timestamp?.toDate();
 
           return {
@@ -159,15 +133,7 @@ function CommentSection() {
 
   // --------------------------------------------
 
-  const handleClickReply = async (commetObj: {
-    comment: string;
-    likes: number;
-    person: string;
-    timestamp: Date | null | undefined;
-    commentId: string;
-    photoURL: string;
-    uid: string;
-  }) => {
+  const handleClickReply = async (commetObj: commentType) => {
     setReplying(true);
     setSelectedComment(commetObj);
   };
@@ -192,23 +158,25 @@ function CommentSection() {
         });
         console.log("New Comment added..");
 
-        const newComment = {
-          comment,
-          likes: 0,
-          person: currentUser.name,
-          timestamp: Timestamp.now().toDate(),
-          photoURL: currentUser.photoURL,
-          uid: currentUser.uid,
-        };
-        
+        fetchComments()
 
-        setCommentList((prevCommentList) => {
-          if (prevCommentList === null) {
-            return [newComment];
-          } else {
-            return [...prevCommentList, newComment];
-          }
-        });
+        // const newComment = {
+        //   comment,
+        //   likes: 0,
+        //   person: currentUser.name,
+        //   timestamp: Timestamp.now().toDate(),
+        //   photoURL: currentUser.photoURL,
+        //   uid: currentUser.uid,
+        //   commentId: comment,
+        // };
+
+        // setCommentList((prevCommentList) => {
+        //   if (!prevCommentList) {
+        //     return [newComment];
+        //   } else {
+        //     return [...prevCommentList, newComment];
+        //   }
+        // });
       } catch (error) {
         console.log(error);
         throw error;
@@ -242,30 +210,23 @@ function CommentSection() {
         });
         console.log("New Reply added..");
 
-      //   const newReply = {
-      //     likes: 0,
-      //     person: currentUser.name,
-      //     replyTo: selectedComment.uid,
-      //     timestamp: Timestamp.now(),
-      //     comment,
-      //     uid: currentUser.uid,
-      //     photoURL: currentUser.photoURL,
-      //   };
+        fetchComments()
 
-      //  setCommentList((prevCommentList) =>
-      //    {prevCommentList?.map((commObj) => {
-      //      if (commObj.commentId === selectedComment.commentId) {
-      //        return {
-      //          ...commObj,
-      //          replyArray: [...(commObj.replyArray || []), newReply],
-      //        };
-      //      } else {
-      //        return commObj;
-      //      }
-      //    })}
-      //  );
+        // const newReply = {
+        //   likes: 0,
+        //   person: currentUser.name,
+        //   replyTo: selectedComment.uid,
+        //   timestamp: Timestamp.now(),
+        //   comment,
+        //   uid: currentUser.uid,
+        //   photoURL: currentUser.photoURL,
+        // };
 
-        
+        // setCommentList(
+        //   commentList?.map((commObj) => {
+        //     return commObj
+        //   })
+        // );
       } catch (error) {
         console.log(error);
         throw error;
@@ -306,6 +267,7 @@ function CommentSection() {
             <div className="flex flex-col ml-12">
               {commObj.replyArray?.map((repObj, index) => (
                 <Reply
+                  key={index}
                   obj={repObj}
                   replying={replying}
                   selectedComment={selectedComment}

@@ -52,12 +52,13 @@ export const INITIAL_COMMENT = {
 
 export const INITIAL_COMMENT_LIST = [
   {
-    comment: "test",
+    comment: "",
     likes: 0,
     person: "",
-    timestamp: new Date(),
+    timestamp: Timestamp.now().toDate(),
     commentId: "",
     photoURL: "",
-    uid: ""
+    uid: "",
+    replyArray: [],
   },
 ];
