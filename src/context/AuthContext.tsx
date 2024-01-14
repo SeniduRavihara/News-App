@@ -1,50 +1,63 @@
 import { onAuthStateChanged, signInWithPopup, signOut } from "firebase/auth";
 import { createContext, useEffect, useState } from "react";
 import { auth, db, provider } from "../firebase/firebaseConfig";
-import { doc, getDoc, setDoc } from "firebase/firestore";
+import {
+  doc,
+  getDoc,
+  onSnapshot,
+  setDoc,
+} from "firebase/firestore";
 import { authContextType, currentUserType } from "../types";
-import { INITIAL_AUTH_CONTEXT, INITIAL_CURRENT_USER } from "../constants";
+import { INITIAL_AUTH_CONTEXT } from "../constants";
 
 export const AuthContext = createContext<authContextType>(INITIAL_AUTH_CONTEXT);
 
 function AuthContextProvider({ children }: { children: React.ReactNode }) {
-  const [currentUser, setCurrentUser] = useState<currentUserType | null>(
-    INITIAL_CURRENT_USER
-  );
+  const [currentUserId, setCurrentUserId] = useState<string | null>(null);
+  const [currentUser, setCurrentUser] = useState<currentUserType | null>(null);
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
       if (!user) {
         setCurrentUser(null);
-        // localStorage.removeItem("token");
-        // localStorage.removeItem("user");
+        setCurrentUserId(null);
         console.log("Auth state is changed: LoggedOut");
-        // navigate("/login");
         return;
       }
 
-      setCurrentUser({
-        uid: user.uid,
-        email: user.email,
-        name: user.displayName,
-        photoURL: user.photoURL,
-      });
+      // setCurrentUser({
+      //   uid: user.uid,
+      //   email: user.email,
+      //   name: user.displayName,
+      //   photoURL: user.photoURL,
+      // });
 
-      // console.log(user.email);
-      // console.log(user.uid);
-      // console.log(user.displayName);
-      // console.log(user.photoURL);
+      setCurrentUserId(user.uid);
 
-      // const token = await user.getIdToken();
-      // localStorage.setItem("token", token);
-      // localStorage.setItem("user", JSON.stringify(user));
-      // navigate("/");
       console.log("Auth state is changed: loggedIn");
     });
 
     return unsubscribe;
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  useEffect(() => {
+    if (currentUserId) {
+      const documentRef = doc(db, "users", currentUserId);
+
+      const unsubscribe = onSnapshot(documentRef, (documentSnapshot) => {
+        if (documentSnapshot.exists()) {
+          const userData = documentSnapshot.data() as currentUserType; // Type cast the data
+          setCurrentUser(userData);
+        } else {
+          console.log("Document does not exist.");
+        }
+      });
+      return unsubscribe;
+    } else {
+      console.log("currentUser is not available.");
+    }
+  }, [currentUserId]);
 
   const googleSignIn = async () => {
     try {
@@ -61,6 +74,7 @@ function AuthContextProvider({ children }: { children: React.ReactNode }) {
           email: user.email || "",
           uid: user.uid,
           photoURL: user.photoURL || "",
+          likedPostsId: [""],
         };
 
         await setDoc(userDocRef, userData);

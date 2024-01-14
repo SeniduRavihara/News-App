@@ -2,6 +2,7 @@ import { MdAccountCircle } from "react-icons/md";
 import { IoMdNotificationsOutline } from "react-icons/io";
 import { IoMdSearch } from "react-icons/io";
 import { useAuth } from "../hooks/useAuth";
+import toast, { Toaster } from "react-hot-toast";
 
 function Headerbar() {
   const { logout, googleSignIn, currentUser } = useAuth();
@@ -11,8 +12,10 @@ function Headerbar() {
     try {
       if (currentUser) {
         await logout();
+        toast.success("You are logged out.");
       } else {
         await googleSignIn();
+        toast.success("You are logged in.");
       }
 
       // navigate("/login");
@@ -31,7 +34,10 @@ function Headerbar() {
           <IoMdNotificationsOutline className="w-6 h-6 cursor-pointer" />
           <div onClick={handleAccountClick}>
             {currentUser ? (
-              <img src={currentUser.photoURL ?? ""} className="w-10 h-10 rounded-full" />
+              <img
+                src={currentUser.photoURL ?? ""}
+                className="w-10 h-10 rounded-full cursor-pointer"
+              />
             ) : (
               <MdAccountCircle className="w-10 h-10 text-gray-400 cursor-pointer" />
             )}
@@ -39,6 +45,7 @@ function Headerbar() {
         </div>
       </div>
       <hr className="border border-t-[1px] border-gray-300 w-full" />
+      <Toaster />
     </div>
   );
 }

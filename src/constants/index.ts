@@ -1,3 +1,5 @@
+import { Timestamp } from "firebase/firestore";
+
 export const INITIAL_NEWS_OBJECT = {
   commentCount: 0,
   likesCount: 0,
@@ -35,3 +37,28 @@ export const INITIAL_AUTH_CONTEXT = {
   googleSignIn: () => {},
   logout: () => {},
 };
+
+// -----------------------------------
+
+export const INITIAL_COMMENT = {
+  comment: "test",
+  likes: 0,
+  person: "",
+  timestamp: Timestamp.now(),
+  commentId: "",
+  photoURL: "",
+  uid: ""
+};
+
+export const INITIAL_COMMENT_LIST = [
+  {
+    comment: "",
+    likes: 0,
+    person: "",
+    timestamp: Timestamp.now().toDate(),
+    commentId: "",
+    photoURL: "",
+    uid: "",
+    replyArray: [],
+  },
+];
