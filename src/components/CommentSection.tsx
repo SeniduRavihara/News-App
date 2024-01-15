@@ -21,7 +21,7 @@ import { BiSend } from "react-icons/bi";
 import Comment from "./Comment";
 import Reply from "./Reply";
 import { INITIAL_COMMENT_LIST } from "../constants";
-import JumpAndSlide from "../animations/jump-and-slide/JumpAndSlide";
+// import JumpAndSlide from "../animations/jump-and-slide/JumpAndSlide";
 
 function CommentSection() {
   const [commentList, setCommentList] =
@@ -233,8 +233,9 @@ function CommentSection() {
 
   if (loading && !firstLoad) {
     return (
-      <div className="w-full flex items-center justify-center mt-10">
-        <JumpAndSlide />
+      <div className="w-full text-2xl font-extrabold text-yellow-700 flex items-center justify-center mt-5">
+        {/* <JumpAndSlide /> */}
+        Comment Loading
       </div>
     );
   }

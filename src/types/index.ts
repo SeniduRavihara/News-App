@@ -6,7 +6,7 @@ export type newsObjType = {
   news: string;
   publishedTime: FieldValue | null;
   title: string;
-  imageUrl: string;
+  imageUrl: string | null;
   newsId: string;
 };
 

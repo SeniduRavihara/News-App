@@ -30,7 +30,7 @@ function Home() {
 
       <div className="flex flex-col w-full items-center relative">
         <img
-          src={lastNews.imageUrl}
+          src={lastNews.imageUrl ?? "/defaultNews.jpg"}
           alt=""
           className="w-[350px] rounded-3xl h-[200px] top-2"
         />
@@ -48,9 +48,9 @@ function Home() {
             onClick={() => handleNewsClick(newsObj.newsId)}
           >
             <img
-              src={newsObj.imageUrl}
+              src={newsObj.imageUrl ?? "/defaultNews.jpg"}
               alt={newsObj.title}
-              className="w-[120px] h-[68px] rounded-xl"
+              className="w-[120px] h-[68px] rounded-xl duration-200"
             />
             <div className="text-[13px]">{newsObj.title}</div>
           </div>

@@ -148,7 +148,7 @@ function NewsPage() {
         <FaArrowLeft className="w-8 h-8 cursor-pointer" />
       </div>
       <img
-        src={selectedNews.imageUrl}
+        src={selectedNews.imageUrl ?? "/defaultNews.jpg"}
         alt=""
         className="w-[350px] rounded-3xl h-[200px] top-2"
       />

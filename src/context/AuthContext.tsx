@@ -25,13 +25,6 @@ function AuthContextProvider({ children }: { children: React.ReactNode }) {
         return;
       }
 
-      // setCurrentUser({
-      //   uid: user.uid,
-      //   email: user.email,
-      //   name: user.displayName,
-      //   photoURL: user.photoURL,
-      // });
-
       setCurrentUserId(user.uid);
 
       console.log("Auth state is changed: loggedIn");
