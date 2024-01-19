@@ -6,17 +6,15 @@ import {
   orderBy,
   query,
   startAfter,
-
 } from "firebase/firestore";
 import { db } from "../firebase/firebaseConfig";
 
-import { dataContextType, newsListType, newsObjType } from "../types";
+import { dataContextType, newsDocType, newsListType, newsObjType, reactionDocType } from "../types";
 import {
   INITIAL_CONTEXT,
   INITIAL_NEWS_LIST,
   INITIAL_NEWS_OBJECT,
 } from "../constants";
-
 
 export const DataContext = createContext<dataContextType>(INITIAL_CONTEXT);
 
@@ -33,7 +31,7 @@ function DataContextProvider({ children }: { children: React.ReactNode }) {
   // ----------------------------------------------------
 
   useEffect(() => {
-    // console.log(newsList);
+    console.log(newsList);
 
     if (newsList.length > 0) {
       setLastNews(newsList[0]);
@@ -55,7 +53,6 @@ function DataContextProvider({ children }: { children: React.ReactNode }) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-
   const fetchData = async () => {
     setLoading(true);
 
@@ -69,26 +66,58 @@ function DataContextProvider({ children }: { children: React.ReactNode }) {
         )
       : collectionRef;
 
-    const querySnapshot = await getDocs(q);
+    const queryNewsSnapshot = await getDocs(q);
 
-    const newNewsArr = querySnapshot.docs.map((doc) => {
-      const data = doc.data() as newsObjType; // Explicitly cast to newsObjType
-      return {
-        ...data,
-        newsId: doc.id,
-      };
-    });
+    const newNewsArrWithReactions = await Promise.all(
+      queryNewsSnapshot.docs.map(async (newsDoc) => {
+        const reactionCollectionRef = collection(
+          db,
+          "news",
+          newsDoc.id,
+          "reactions"
+        );
 
-    setNewsList((prevNewsList) => [...prevNewsList, ...newNewsArr]);
+        const queryReactionSnapshot = await getDocs(reactionCollectionRef);
 
-    if (newNewsArr.length > 0) {
-      setLastFetchedNews(newNewsArr[newNewsArr.length - 1]);
+        const reactionArray = queryReactionSnapshot.docs.map((reactionDoc) => {
+          const reactionData = reactionDoc.data() as reactionDocType;
+          return {
+            ...reactionData,
+            key: reactionDoc.id
+          };
+        });
+
+        const newsData = newsDoc.data() as newsDocType;
+        // const newsTimestamp = newsData.publishedTime?.toDate();
+
+        return {
+          reactionArray,
+          ...newsData,
+          newsId: newsDoc.id,
+        };
+      })
+    );
+
+
+    // const newNewsArr = queryNewsSnapshot.docs.map((doc) => {
+    //   const data = doc.data() as newsObjType; // Explicitly cast to newsObjType
+    //   return {
+    //     ...data,
+    //     newsId: doc.id,
+    //   };
+    // });
+
+    setNewsList((prevNewsList) => [...prevNewsList, ...newNewsArrWithReactions]);
+
+    if (newNewsArrWithReactions.length > 0) {
+      setLastFetchedNews(
+        newNewsArrWithReactions[newNewsArrWithReactions.length - 1]
+      );
     }
 
     setLoading(false);
   };
 
- 
   const value = {
     newsList,
     lastNews,

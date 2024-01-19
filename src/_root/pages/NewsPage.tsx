@@ -8,17 +8,21 @@ import { doc, updateDoc } from "firebase/firestore";
 import { db } from "../../firebase/firebaseConfig";
 import { AiFillLike } from "react-icons/ai";
 import { AiFillDislike } from "react-icons/ai";
+import { ReactionBarSelector } from "@charkour/react-reactions";
+import { ReactionCounter } from "@charkour/react-reactions";
 
 function NewsPage() {
   const [liked, setLiked] = useState<boolean>(false);
   const [unliked, setUnliked] = useState<boolean>(false);
+  const [reaction, setReaction] = useState<
+    "satisfaction" | "happy" | "love" | "sad" | "angry" | "surprise" | null
+  >(null);
 
   // const [loadingComments, setLoadingComments] = useState(false);
 
   const { selectedNews } = useData();
   const { currentUser } = useAuth();
   const navigate = useNavigate();
-
 
   // const addLikeToNews = async () => {};
 
@@ -138,6 +142,27 @@ function NewsPage() {
     unlikePost();
   };
 
+  const addReation = (key: string) =>{
+    
+  }
+
+  const handleReactionClick = (key: string) => {
+    addReation(key)
+    if (key === "satisfaction") {
+      reaction? setReaction("satisfaction"): setReaction(null)
+    } else if (key === "happy") {
+      reaction ? setReaction("happy") : setReaction(null);
+    } else if (key === "love") {
+      reaction ? setReaction("love") : setReaction(null);
+    } else if (key === "sad") {
+      reaction ? setReaction("sad") : setReaction(null);
+    } else if (key === "angry") {
+      reaction ? setReaction("angry") : setReaction(null);
+    } else if (key === "surprise") {
+      reaction ? setReaction("surprise") : setReaction(null);
+    }
+  };
+
   if (!selectedNews.newsId) {
     return <Navigate to="/" />;
   }
@@ -171,8 +196,19 @@ function NewsPage() {
 
       <hr className="border border-t-[1px] border-gray-300 w-full" />
 
+      <ReactionBarSelector iconSize={20} onSelect={handleReactionClick} />
+
+      <ReactionCounter
+        reactions={[
+          { label: "haha", node: <div>😄</div>, by: "Senidu" },
+          { label: "haha", node: <div>😄</div>, by: "Senidu" },
+        ]}
+        showTotalOnly
+      />
+
       <div className="w-screen">
         <CommentSection />
+        RRR
       </div>
     </div>
   );
