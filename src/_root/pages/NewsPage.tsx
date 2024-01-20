@@ -1,19 +1,15 @@
 import { Navigate, useNavigate } from "react-router-dom";
 import { useData } from "../../hooks/useData";
 import { FaArrowLeft } from "react-icons/fa";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import CommentSection from "../../components/CommentSection";
 import { useAuth } from "../../hooks/useAuth";
 import { doc, updateDoc } from "firebase/firestore";
 import { db } from "../../firebase/firebaseConfig";
-import { AiFillLike } from "react-icons/ai";
-import { AiFillDislike } from "react-icons/ai";
 import { ReactionBarSelector } from "@charkour/react-reactions";
 import { ReactionCounter } from "@charkour/react-reactions";
 
 function NewsPage() {
-  const [liked, setLiked] = useState<boolean>(false);
-  const [unliked, setUnliked] = useState<boolean>(false);
   const [reaction, setReaction] = useState<
     "satisfaction" | "happy" | "love" | "sad" | "angry" | "surprise" | null
   >(null);
@@ -21,146 +17,113 @@ function NewsPage() {
   // const [loadingComments, setLoadingComments] = useState(false);
 
   const { selectedNews } = useData();
-  const { currentUser } = useAuth();
+  const { currentUser, googleSignIn } = useAuth();
   const navigate = useNavigate();
 
-  // const addLikeToNews = async () => {};
-
-  const likePost = async () => {
-    if (currentUser) {
-      const documentRef = doc(db, "users", currentUser.uid);
-
-      if (!liked) {
-        console.log("add like");
-        try {
-          const updatedLikedPostsId = [
-            ...(currentUser.likedPostsId || []),
-            currentUser.likedPostsId?.includes(selectedNews.newsId)
-              ? null // or any other placeholder value if you want
-              : selectedNews.newsId,
-          ].filter((id) => id !== null);
-
-          await updateDoc(documentRef, {
-            likedPostsId: updatedLikedPostsId,
-          });
-
-          // const newsDocumentRef = doc(db, "news", selectedNews.newsId);
-          // await updateDoc(newsDocumentRef, {
-          //   likesCount: selectedNews.likesCount + 1,
-          // });
-        } catch (error) {
-          console.log(error);
-          throw error;
-        }
-      } else {
-        console.log("remove like");
-        try {
-          const updatedLikedNewsIdList = currentUser.likedPostsId?.filter(
-            (newsId) => newsId !== selectedNews.newsId
-          );
-
-          await updateDoc(documentRef, {
-            likedPostsId: updatedLikedNewsIdList,
-          });
-
-          // const newsDocumentRef = doc(db, "news", selectedNews.newsId);
-          // await updateDoc(newsDocumentRef, {
-          //   likesCount: selectedNews.likesCount + 1,
-          // });
-        } catch (error) {
-          console.log(error);
-          throw error;
-        }
-      }
-    } else {
-      alert("Please Login for like");
-    }
-  };
-
-  const unlikePost = async () => {
-    if (currentUser) {
-      const documentRef = doc(db, "users", currentUser.uid);
-
-      if (!unliked) {
-        console.log("unliked");
-        try {
-          // Assuming likedPostsId is an array field in your Firestore document
-          const updatedUnlikedPostsId = [
-            ...(currentUser.unlikedPostsId || []),
-            selectedNews.newsId,
-          ];
-
-          await updateDoc(documentRef, {
-            unlikedPostsId: updatedUnlikedPostsId,
-          });
-
-          // const newsDocumentRef = doc(db, "news", selectedNews.newsId);
-          // await updateDoc(newsDocumentRef, {
-          //   likesCount: selectedNews.likesCount + 1,
-          // });
-        } catch (error) {
-          console.log(error);
-          throw error;
-        }
-      } else {
-        console.log("remove unlike");
-        try {
-          const updatedUnlikedNewsIdList = currentUser.likedPostsId?.filter(
-            (newsId) => newsId !== selectedNews.newsId
-          );
-
-          await updateDoc(documentRef, {
-            unlikedPostsId: updatedUnlikedNewsIdList,
-          });
-
-          // const newsDocumentRef = doc(db, "news", selectedNews.newsId);
-          // await updateDoc(newsDocumentRef, {
-          //   likesCount: selectedNews.likesCount + 1,
-          // });
-        } catch (error) {
-          console.log(error);
-          throw error;
-        }
-      }
-    } else {
-      alert("Please Login for unlike");
-    }
-  };
+  // useEffect(() => {
+  //   const reactionObj = getReactionObjFromArray("love");
+  //   console.log("Test", reactionObj.count);
+  // }, []);
 
   const handleClickArrow = () => {
     navigate("/");
   };
 
-  const handleNewsLikeClick = async () => {
-    setLiked((pre) => !pre);
-    setUnliked(false);
-    likePost();
-  };
-  const handleNewsUnlikeClick = async () => {
-    setUnliked((pre) => !pre);
-    setLiked(false);
-    unlikePost();
-  };
+  const addReaction = async (key: string) => {
+    if (currentUser) {
+      const documentRef = doc(
+        db,
+        "news",
+        selectedNews.newsId,
+        "reactions",
+        key
+      );
 
-  const addReation = (key: string) =>{
-    
-  }
+      try {
+        const reactionObj = getReactionObjFromArray(key);
 
-  const handleReactionClick = (key: string) => {
-    addReation(key)
-    if (key === "satisfaction") {
-      reaction? setReaction("satisfaction"): setReaction(null)
-    } else if (key === "happy") {
-      reaction ? setReaction("happy") : setReaction(null);
-    } else if (key === "love") {
-      reaction ? setReaction("love") : setReaction(null);
-    } else if (key === "sad") {
-      reaction ? setReaction("sad") : setReaction(null);
-    } else if (key === "angry") {
-      reaction ? setReaction("angry") : setReaction(null);
-    } else if (key === "surprise") {
-      reaction ? setReaction("surprise") : setReaction(null);
+        if (reactionObj) {
+          if (!reactionObj.persons.includes(currentUser.uid)) {
+            await updateDoc(documentRef, {
+              count: reactionObj.count + 1,
+              persons: [...reactionObj.persons, currentUser.uid],
+            });
+            console.log("Reaction added");
+          }
+        } else {
+          console.error("Reaction object not found for key:", key);
+          // Handle the case where the reaction object is undefined
+        }
+      } catch (error) {
+        console.log(error);
+        throw error;
+      }
+    } else {
+      googleSignIn();
     }
+  };
+
+  const removeReation = async (key: string) => {
+    if (currentUser) {
+      const documentRef = doc(
+        db,
+        "news",
+        selectedNews.newsId,
+        "reactions",
+        key
+      );
+
+      try {
+        const reactionObj = getReactionObjFromArray(key);
+
+        if (reactionObj) {
+          if (!reactionObj.persons.includes(currentUser.uid)) {
+            await updateDoc(documentRef, {
+              count: reactionObj.count,
+              persons: [...reactionObj.persons],
+            });
+            console.log("Reaction Removed");
+          }
+        } else {
+          console.error("Reaction object not found for key:", key);
+        }
+      } catch (error) {
+        console.log(error);
+        throw error;
+      }
+    } else {
+      googleSignIn();
+    }
+  };
+
+  const getReactionObjFromArray = (key: string) => {
+    return selectedNews.reactionArray?.filter((obj) => obj.key === key)[0];
+  };
+
+  const handleReactionClick = (
+    key: "satisfaction" | "happy" | "love" | "sad" | "angry" | "surprise"
+  ) => {
+    addReaction(key);
+
+    if (reaction) {
+      if (reaction === key) {
+        setReaction(null);
+        removeReation(key);
+        return;
+      }else{
+        removeReation(reaction)
+        addReaction(key)
+      }
+    }
+
+    setReaction(key);
+
+    // if (reaction) {
+    //   removeReation(reaction);
+    //   setReaction(key);
+    // } else {
+    //   setReaction(key);
+    // }
   };
 
   if (!selectedNews.newsId) {
@@ -186,12 +149,7 @@ function NewsPage() {
       <p className="text-[14px]">{selectedNews.news}</p>
 
       <div className="flex gap-5 justify-between">
-        <button onClick={handleNewsLikeClick}>
-          <AiFillLike className={`${liked && "text-blue-700"} text-2xl`} />
-        </button>
-        <button onClick={handleNewsUnlikeClick}>
-          <AiFillDislike className={`${unliked && "text-red-700"} text-2xl`} />
-        </button>
+        {selectedNews.reactionArray && selectedNews.reactionArray[0].count}
       </div>
 
       <hr className="border border-t-[1px] border-gray-300 w-full" />

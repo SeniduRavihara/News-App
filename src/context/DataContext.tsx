@@ -68,7 +68,7 @@ function DataContextProvider({ children }: { children: React.ReactNode }) {
 
     const queryNewsSnapshot = await getDocs(q);
 
-    const newNewsArrWithReactions = await Promise.all(
+    const newNewsArrWithReactions: newsListType = await Promise.all(
       queryNewsSnapshot.docs.map(async (newsDoc) => {
         const reactionCollectionRef = collection(
           db,

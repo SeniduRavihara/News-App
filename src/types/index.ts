@@ -23,11 +23,11 @@ export type newsDocType = {
 
 export type newsListType = Array<newsObjType>;
 
-export type reactionType = {
-  count: number;
-  persons: Array<string>;
-  key: "string"
-};
+// export type reactionType = {
+//   count: number;
+//   persons: Array<string>;
+//   key: "string"
+// };
 
 // ----------------------------------------------
 
@@ -110,4 +110,5 @@ export type replyDocType = {
 export type reactionDocType = {
   count: number,
   persons: Array<string>
+  key: string
 };
