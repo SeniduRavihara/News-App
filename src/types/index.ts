@@ -110,5 +110,6 @@ export type replyDocType = {
 export type reactionDocType = {
   count: number,
   persons: Array<string>
-  key: string
+  key: string,
+  imoji: string
 };

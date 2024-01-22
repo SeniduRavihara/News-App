@@ -1,29 +1,21 @@
 import { Navigate, useNavigate } from "react-router-dom";
 import { useData } from "../../hooks/useData";
 import { FaArrowLeft } from "react-icons/fa";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import CommentSection from "../../components/CommentSection";
 import { useAuth } from "../../hooks/useAuth";
 import { doc, updateDoc } from "firebase/firestore";
 import { db } from "../../firebase/firebaseConfig";
-import { ReactionBarSelector } from "@charkour/react-reactions";
-import { ReactionCounter } from "@charkour/react-reactions";
+import { FacebookSelector, ReactionCounter } from "@charkour/react-reactions";
 
 function NewsPage() {
-  const [reaction, setReaction] = useState<
-    "satisfaction" | "happy" | "love" | "sad" | "angry" | "surprise" | null
-  >(null);
+  const [reaction, setReaction] = useState<string | null>(null);
 
   // const [loadingComments, setLoadingComments] = useState(false);
 
   const { selectedNews } = useData();
   const { currentUser, googleSignIn } = useAuth();
   const navigate = useNavigate();
-
-  // useEffect(() => {
-  //   const reactionObj = getReactionObjFromArray("love");
-  //   console.log("Test", reactionObj.count);
-  // }, []);
 
   const handleClickArrow = () => {
     navigate("/");
@@ -100,23 +92,23 @@ function NewsPage() {
     return selectedNews.reactionArray?.filter((obj) => obj.key === key)[0];
   };
 
-  const handleReactionClick = (
-    key: "satisfaction" | "happy" | "love" | "sad" | "angry" | "surprise"
-  ) => {
-    addReaction(key);
+  const handleReactionClick = (label: string) => {
+    // console.log(label);
+
+    addReaction(label);
 
     if (reaction) {
-      if (reaction === key) {
+      if (reaction === label) {
         setReaction(null);
-        removeReation(key);
+        removeReation(label);
         return;
-      }else{
-        removeReation(reaction)
-        addReaction(key)
+      } else {
+        removeReation(reaction);
+        addReaction(label);
       }
     }
 
-    setReaction(key);
+    setReaction(label);
 
     // if (reaction) {
     //   removeReation(reaction);
@@ -148,21 +140,21 @@ function NewsPage() {
 
       <p className="text-[14px]">{selectedNews.news}</p>
 
-      <div className="flex gap-5 justify-between">
-        {selectedNews.reactionArray && selectedNews.reactionArray[0].count}
-      </div>
-
       <hr className="border border-t-[1px] border-gray-300 w-full" />
 
-      <ReactionBarSelector iconSize={20} onSelect={handleReactionClick} />
-
-      <ReactionCounter
-        reactions={[
-          { label: "haha", node: <div>😄</div>, by: "Senidu" },
-          { label: "haha", node: <div>😄</div>, by: "Senidu" },
-        ]}
-        showTotalOnly
-      />
+      <div className="flex w-full justify-between">
+        <FacebookSelector iconSize={20} onSelect={handleReactionClick} />
+        <ReactionCounter
+          reactions={selectedNews.reactionArray
+            ?.filter((reactionObj) => reactionObj.count > 0)
+            .map((reactionObj) => ({
+              label: reactionObj.key,
+              node: <div>{reactionObj.emoji}</div>,
+              by: reactionObj.persons,
+            }))}
+          iconSize={20}
+        />
+      </div>
 
       <div className="w-screen">
         <CommentSection />

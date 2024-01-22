@@ -9,7 +9,13 @@ import {
 } from "firebase/firestore";
 import { db } from "../firebase/firebaseConfig";
 
-import { dataContextType, newsDocType, newsListType, newsObjType, reactionDocType } from "../types";
+import {
+  dataContextType,
+  newsDocType,
+  newsListType,
+  newsObjType,
+  reactionDocType,
+} from "../types";
 import {
   INITIAL_CONTEXT,
   INITIAL_NEWS_LIST,
@@ -83,7 +89,7 @@ function DataContextProvider({ children }: { children: React.ReactNode }) {
           const reactionData = reactionDoc.data() as reactionDocType;
           return {
             ...reactionData,
-            key: reactionDoc.id
+            key: reactionDoc.id,
           };
         });
 
@@ -98,7 +104,6 @@ function DataContextProvider({ children }: { children: React.ReactNode }) {
       })
     );
 
-
     // const newNewsArr = queryNewsSnapshot.docs.map((doc) => {
     //   const data = doc.data() as newsObjType; // Explicitly cast to newsObjType
     //   return {
@@ -107,7 +112,10 @@ function DataContextProvider({ children }: { children: React.ReactNode }) {
     //   };
     // });
 
-    setNewsList((prevNewsList) => [...prevNewsList, ...newNewsArrWithReactions]);
+    setNewsList((prevNewsList) => [
+      ...prevNewsList,
+      ...newNewsArrWithReactions,
+    ]);
 
     if (newNewsArrWithReactions.length > 0) {
       setLastFetchedNews(
