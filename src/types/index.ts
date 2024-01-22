@@ -1,16 +1,35 @@
-import { FieldValue, Timestamp } from "firebase/firestore";
+import {  Timestamp } from "firebase/firestore";
 
 export type newsObjType = {
   commentCount: number;
   likesCount: number;
   news: string;
-  publishedTime: FieldValue | null;
+  publishedTime: Timestamp | null;
+  title: string;
+  imageUrl: string | null;
+  newsId: string;
+  reactionArray?: null | Array<reactionDocType>;
+};
+
+export type newsDocType = {
+  commentCount: number;
+  likesCount: number;
+  news: string;
+  publishedTime: Timestamp | null;
   title: string;
   imageUrl: string | null;
   newsId: string;
 };
 
 export type newsListType = Array<newsObjType>;
+
+// export type reactionType = {
+//   count: number;
+//   persons: Array<string>;
+//   key: "string"
+// };
+
+// ----------------------------------------------
 
 export type dataContextType = {
   newsList: newsListType;
@@ -86,4 +105,11 @@ export type replyDocType = {
   replyTo: string;
   timestamp: Timestamp;
   uid: string;
+};
+
+export type reactionDocType = {
+  count: number,
+  persons: Array<string>
+  key: string,
+  imoji: string
 };

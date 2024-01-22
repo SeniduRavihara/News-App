@@ -8,6 +8,7 @@ export const INITIAL_NEWS_OBJECT = {
   title: "",
   imageUrl: "",
   newsId: "",
+  reactionArray: null,
 };
 
 export const INITIAL_NEWS_LIST = [INITIAL_NEWS_OBJECT];
