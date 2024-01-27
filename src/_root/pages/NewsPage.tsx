@@ -142,7 +142,7 @@ function NewsPage() {
 
       <hr className="border border-t-[1px] border-gray-300 w-full" />
 
-      <div className="flex w-full justify-between">
+      <div className="hidden w-full justify-between">
         <FacebookSelector iconSize={20} onSelect={handleReactionClick} />
         <ReactionCounter
           reactions={selectedNews.reactionArray
@@ -158,7 +158,6 @@ function NewsPage() {
 
       <div className="w-screen">
         <CommentSection />
-        RRR
       </div>
     </div>
   );

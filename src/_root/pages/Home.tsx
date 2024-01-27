@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { useData } from "../../hooks/useData";
 import Headerbar from "../../components/Headerbar";
 import { useNavigate } from "react-router-dom";
@@ -6,8 +7,14 @@ import FirstLoading from "../../animations/firstLoading/FirstLoading";
 import { Toaster } from "react-hot-toast";
 
 function Home() {
-  const { newsList, lastNews, setSelectedNews, fetchData, firstLoading } =
-    useData();
+  const {
+    newsList,
+    lastNews,
+    setSelectedNews,
+    fetchData,
+    firstLoading,
+    loading,
+  } = useData();
   const navigate = useNavigate();
 
   const getNews = (newsId: string, newsList: newsListType): newsObjType => {
@@ -19,6 +26,31 @@ function Home() {
     setSelectedNews(selectedNews);
     navigate("/news-page");
   };
+
+  const handleScroll = () => {
+    const scrollY = window.scrollY;
+    const windowHeight = window.innerHeight;
+    const documentHeight = document.documentElement.scrollHeight;
+
+    // Adjust this threshold as needed to trigger fetching more data
+    const scrollThreshold = 200;
+
+    if (
+      scrollY + windowHeight >= documentHeight - scrollThreshold &&
+      !loading
+    ) {
+      fetchData();
+    }
+  };
+
+  useEffect(() => {
+    window.addEventListener("scroll", handleScroll);
+
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [loading]);
 
   if (firstLoading) {
     return <FirstLoading />;
@@ -57,14 +89,18 @@ function Home() {
         ))}
       </div>
 
-      <button
+      {/* <button
         onClick={fetchData}
         className="bg-blue-900 px-5 py-2 rounded-2xl text-white font-semibold text-lg"
       >
         Load More
-      </button>
+      </button> */}
+
+      {loading && "Loading"}
+
       <Toaster />
     </div>
   );
 }
+
 export default Home;
