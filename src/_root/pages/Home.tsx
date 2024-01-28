@@ -5,6 +5,7 @@ import { useNavigate } from "react-router-dom";
 import { newsListType, newsObjType } from "../../types";
 import FirstLoading from "../../animations/firstLoading/FirstLoading";
 import { Toaster } from "react-hot-toast";
+import ImageWithFallback from "../../components/ImageWithFallback";
 
 function Home() {
   const {
@@ -79,12 +80,18 @@ function Home() {
             className="flex gap-3 py-2 items-center cursor-pointer"
             onClick={() => handleNewsClick(newsObj.newsId)}
           >
-            <img
+            {/* <img
               src={newsObj.imageUrl ?? "/defaultNews.jpg"}
               alt={newsObj.title}
               className="w-[120px] h-[68px] rounded-xl duration-200"
+            /> */}
+            <ImageWithFallback
+              src={newsObj.imageUrl ?? "/defaultNews.jpg"}
+              fallbackSrc="/defaultNews.jpg"
+              alt={newsObj.title}
+              
             />
-            <div className="text-[13px]">{newsObj.title}</div>
+            <div className="text-[13px]">{newsObj.title}I</div>
           </div>
         ))}
       </div>

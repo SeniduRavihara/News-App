@@ -13,6 +13,7 @@ function Comment({
   selectedComment: commentType | null;
 }) {
   const { currentUser } = useAuth();
+
   const getTimeDifference = (timestamp: Date | undefined | null): string => {
     if (!timestamp) {
       return "";
@@ -23,13 +24,22 @@ function Comment({
       currentDateTime.getTime() - timestamp.getTime()
     );
 
-    const hours = Math.floor(timeDifference / (1000 * 60 * 60));
-    const minutes = Math.floor(
-      (timeDifference % (1000 * 60 * 60)) / (1000 * 60)
-    );
+    const seconds = Math.floor(timeDifference / 1000);
+    const minutes = Math.floor(seconds / 60);
+    const hours = Math.floor(minutes / 60);
+    const days = Math.floor(hours / 24);
 
-    return hours !== 0 ? `${hours}h` : minutes !== 0 ? `${minutes}min` : "";
+    if (days > 0) {
+      return `${days}d`;
+    } else if (hours > 0) {
+      return `${hours}h`;
+    } else if (minutes > 0) {
+      return `${minutes}min`;
+    } else {
+      return ""
+    }
   };
+
 
   return (
     <div className="flex gap-2 py-2 w-full">
