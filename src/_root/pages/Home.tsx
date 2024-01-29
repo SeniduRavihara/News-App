@@ -85,13 +85,14 @@ function Home() {
               alt={newsObj.title}
               className="w-[120px] h-[68px] rounded-xl duration-200"
             /> */}
-            <ImageWithFallback
-              src={newsObj.imageUrl ?? "/defaultNews.jpg"}
-              fallbackSrc="/defaultNews.jpg"
-              alt={newsObj.title}
-              
-            />
-            <div className="text-[13px]">{newsObj.title}I</div>
+            <div className="w-4/12 h-[68px] ">
+              <ImageWithFallback
+                src={newsObj.imageUrl ?? "/defaultNews.jpg"}
+                fallbackSrc="/defaultNews.jpg"
+                alt={newsObj.title}
+              />
+            </div>
+            <div className="text-[13px] w-8/12">{newsObj.title}I</div>
           </div>
         ))}
       </div>
